@@ -9,6 +9,9 @@ class Interpreter:
         self._functions = functions.functions(debug)
         self._vars = {}
         self._libs = {}
+        self._funcs = {}
+        self._define_function: bool = False
+        self._define_function_name:str = None
         if debug:
             print("Interpreter is running")
 
@@ -17,7 +20,6 @@ class Interpreter:
             command_parts = self._functions.split_command(command)
             o_i = command_parts.index("frage")
             frage = " ".join(command_parts[o_i+1:]) + ": "
-            # command_parts[o_i:] = [input(frage)]
             command = command.replace(" ".join(command_parts[o_i:]), input(frage))
 
         if not "=>" in command.split():
@@ -59,6 +61,22 @@ class Interpreter:
             
 
         cmd = command_parts[0]
+
+        if cmd in self._funcs:
+            for c in self._funcs[cmd]:
+                self.execute(c)
+            return
+
+        if self._define_function:
+            if cmd == "funk":
+                self._functions.ausgabe("Mann kann keine Funktion in einer Funktion defienieren", "r")
+                return
+            elif cmd == "end_funk":
+                self._define_function = False
+                self._define_function_name = None
+                return
+            self._funcs[self._define_function_name].append(command)
+            return
         
 
         if cmd == "?hilfe" or cmd == "?":
@@ -100,6 +118,14 @@ class Interpreter:
                 "  lade <Bileothek>\n" \
                 "  Lädt eine Bibleothek"
             )
+
+        elif cmd == "funk":
+            try:
+                self._funcs[command_parts[1]] = []
+                self._define_function = True
+                self._define_function_name = command_parts[1]
+            except IndexError:
+                self._functions.ausgabe("Kein Funktionsname angegeben.", "r")
 
         elif cmd == "lade":
             if len(command_parts) == 1:
