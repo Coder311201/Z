@@ -71,7 +71,7 @@ class Interpreter:
             if cmd == "funk":
                 self._functions.ausgabe("Mann kann keine Funktion in einer Funktion defienieren", "r")
                 return
-            elif cmd == "end_funk":
+            elif cmd == "ende_funk":
                 self._define_function = False
                 self._define_function_name = None
                 return
