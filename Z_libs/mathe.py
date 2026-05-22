@@ -15,7 +15,9 @@ class mathe:
             self._functions.ausgabe("Fehler", "r")
             print("Bitte eine gültige Zahl übergeben")
             return
+        x = math.radians(x)
         y = math.sin(x)
+        y = round(y, 10)
         if y % 1 == 0: y = int(y)
         return y
     
@@ -26,7 +28,9 @@ class mathe:
             self._functions.ausgabe("Fehler", "r")
             print("Bitte eine gültige Zahl übergeben")
             return
+        x = math.radians(x)
         y = math.cos(x)
+        y = round(y, 10)
         if y % 1 == 0: y = int(y)
         return y
     
