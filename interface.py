@@ -14,7 +14,10 @@ class Interface:
             print("Interface is started")
         try:
             while True:
-                command = input(">> ")
+                if self.executer.define_function:
+                    command = input("-> ")
+                else:
+                    command = input(">> ")
                 self.executer.execute(command)
         except KeyboardInterrupt:
             print("\nProgramm beendet")

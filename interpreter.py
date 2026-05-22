@@ -10,12 +10,23 @@ class Interpreter:
         self._vars = {}
         self._libs = {}
         self._funcs = {}
-        self._define_function: bool = False
+        self.define_function: bool = False
         self._define_function_name:str = None
         if debug:
             print("Interpreter is running")
 
     def execute(self, command: str):
+        if self.define_function:
+            if "funk" in command.split():
+                self._functions.ausgabe("Mann kann keine Funktion in einer Funktion defienieren", "r")
+                return
+            elif "ende_funk" in command.split():
+                self.define_function = False
+                self._define_function_name = None
+                return
+            self._funcs[self._define_function_name].append(command)
+            return
+        
         if "frage" in command.split():
             command_parts = self._functions.split_command(command)
             o_i = command_parts.index("frage")
@@ -65,19 +76,7 @@ class Interpreter:
         if cmd in self._funcs:
             for c in self._funcs[cmd]:
                 self.execute(c)
-            return
-
-        if self._define_function:
-            if cmd == "funk":
-                self._functions.ausgabe("Mann kann keine Funktion in einer Funktion defienieren", "r")
-                return
-            elif cmd == "ende_funk":
-                self._define_function = False
-                self._define_function_name = None
-                return
-            self._funcs[self._define_function_name].append(command)
-            return
-        
+            return        
 
         if cmd == "?hilfe" or cmd == "?":
             if len(command_parts) >= 2:
@@ -114,15 +113,19 @@ class Interpreter:
                 "  > <kommentar>\n"
                 "    Ignoriert die Zeile als Kommentar.\n" 
                 "  <var_name> => <var_value>\n" 
-                "  Definiert eine Variable mit dem angegebenen Namen und Wert.\n" 
-                "  lade <Bileothek>\n" \
-                "  Lädt eine Bibleothek"
+                "    Definiert eine Variable mit dem angegebenen Namen und Wert.\n" 
+                "  lade <Bileothek>\n"
+                "    Lädt eine Bibleothek\n"
+                "  frage <Frage>\n"
+                "    Erfragt eine Benutzereingabe\n"
+                "  funk <Funktionsname>\n" \
+                "    Erstellt eine Funktion nutz ende_funk um die Funktion zu beenden"
             )
 
         elif cmd == "funk":
             try:
                 self._funcs[command_parts[1]] = []
-                self._define_function = True
+                self.define_function = True
                 self._define_function_name = command_parts[1]
             except IndexError:
                 self._functions.ausgabe("Kein Funktionsname angegeben.", "r")
