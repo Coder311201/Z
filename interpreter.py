@@ -200,11 +200,19 @@ class Interpreter:
                 return
 
             if command_parts[1] == "-p":
-                if len(command_parts) < 3:
+                idx = command.find("-p")
+                dateipfad = command[idx + 2 :].strip()
+                if (dateipfad.startswith('"') and dateipfad.endswith('"')) or (
+                    dateipfad.startswith("'") and dateipfad.endswith("'")
+                ):
+                    dateipfad = dateipfad[1:-1]
+
+                if not dateipfad:
                     self._functions.ausgabe("Kein Pfad angegeben!", "r")
                     print("Fuehre ?hilfe oder run -h aus wenn du hilfe brauchst")
                     return
-                self._functions.compile(command_parts[2])
+
+                self._functions.compile(dateipfad)
             elif command_parts[1] == "-h":
                 print(
                     "Hilfe fuer run\n"
